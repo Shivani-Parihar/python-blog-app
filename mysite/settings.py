@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+import dj_database_url
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,9 +25,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '5#si)5wu8s=6y@(h2r0*w+bbe@@l^w!$2&xl!d$_5&_-pp-stc'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '<your_username>.pythonanywhere.com']
+DEBUG = False
+
+ALLOWED_HOSTS = ['*']
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
 
 
 # Application definition
@@ -77,10 +86,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'blogdatabase',
-        'USER': 'bloguser',
-        'PASSWORD': 'secret',
-        'HOST': '127.0.0.1',
+        'NAME': 'd6qdkhcbhpaetq',
+        'USER': 'kmhasvqqbigefm',
+        'PASSWORD': '349cc17c04ad0759913056b00dad838cf2085324a930ddbcbd1123c0547da6ac',
+        'HOST': 'ec2-23-21-246-11.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }
@@ -122,5 +131,28 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# Extra places for collectstatic to find static files.
+
+STATICFILES_DIRS = (
+
+os.path.join(PROJECT_ROOT, 'static'),
+
+)
+
+# Update database configuration with $DATABASE_URL.
+
+db_from_env = dj_database_url.config(conn_max_age=500)
+
+DATABASES['default'].update(db_from_env)
+
+
+# Simplified static file serving.
+
+# https://warehouse.python.org/project/whitenoise/
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
